@@ -1,0 +1,2 @@
+Simplified buffered writer!
+Simplified buffered writer!
