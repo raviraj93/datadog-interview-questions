@@ -25,7 +25,7 @@ public class WordsFormed {
         for (Map.Entry<Character, Integer> entry : temp.entrySet()) {
             char ch = entry.getKey();
             int count = entry.getValue();
-            if (!map.containsKey(ch) || map.get(ch) < entry.getValue()) {
+            if (!map.containsKey(ch) || map.get(ch) < count) {
                 return false;
             }
         }

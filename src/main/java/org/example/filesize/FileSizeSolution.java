@@ -26,15 +26,7 @@ public class FileSizeSolution {
         }
     }
 
-    public static int getTotalSize(FSEntry root, String path) {
-        if (path.equals("/") || path.isEmpty()) {
-            return getSizeRecursive(root);
-        }
 
-        String[] parts = path.replaceAll("^/+", "").split("/");
-        FSEntry target = findEntry(root, parts, 0);
-        return computeSizeIterative(target);
-    }
 
     private static FSEntry getEntry(FSEntry current, String[] parts, int index) {
         if (index >= parts.length) return current;
@@ -65,6 +57,16 @@ public class FileSizeSolution {
     }
 
 
+    public static int getTotalSize(FSEntry root, String path) {
+        if (path.equals("/") || path.isEmpty()) {
+            return getSizeRecursive(root);
+        }
+
+        String[] parts = path.replaceAll("^/+", "").split("/");
+        FSEntry target = findEntry(root, parts, 0);
+        return computeSizeIterative(target);
+    }
+
     private static int computeSizeIterative(FSEntry entry) {
         if (entry == null) return 0;
 
@@ -89,20 +91,30 @@ public class FileSizeSolution {
         return total;
     }
 
-    // Find entry at path
+    // Recursively finds the FSEntry (file or directory) at the specified path.
+    // current: the current file system entry (starting point)
+    // parts: array of path components (e.g., ["home", "me", "file.txt"])
+    // index: current position in the parts array
     private static FSEntry findEntry(FSEntry current, String[] parts, int index) {
+        // Base case: if we've processed all parts, return the current entry.
         if (index >= parts.length) return current;
 
+        // If the current entry is a directory, we need to search its contents.
         if (current instanceof Directory dir) {
+            // Iterate over each entry in the directory's content.
             for (FSEntry entry : dir.content) {
+                // If the entry's name matches the current path part,
+                // recursively search for the next part starting from this entry.
                 if (entry.name.equals(parts[index])) {
                     return findEntry(entry, parts, index + 1);
                 }
             }
         }
 
+        // If no matching entry is found, or current is not a directory, return null.
         return null;
     }
+
 
         public static void main(String[] args) {
         Directory root = new Directory("",
@@ -134,5 +146,9 @@ public class FileSizeSolution {
         System.out.println("Total /var/: " + getTotalSize(root, "var/")); // 2730605
         System.out.println("Total /home/me/: " + getTotalSize(root, "/home/me/")); // 351040
         System.out.println("Total /var/log/wifi.log: " + getTotalSize(root, "/var/log/wifi.log")); // 924818
+
+        System.out.println("Total Size home/me/foo.txt: " + getTotalSize(root, "home/me/foo.txt"));
+        System.out.println("Total Size home/me/: " + getTotalSize(root, "home/me/"));
+
     }
 }
